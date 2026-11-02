@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Phishing Detection Engine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #05080f;
+      color: #e6edf6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .container { width: 100%; max-width: 640px; }
+
+    header { text-align: center; margin-bottom: 28px; }
+    header .shield {
+      width: 64px; height: 64px;
+      margin: 0 auto 14px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      border-radius: 16px;
+    }
+    h1 { font-size: 1.45rem; font-weight: 700; letter-spacing: 0.3px; }
+    .subtitle { margin-top: 8px; font-size: 0.85rem; color: #8fa3bd; line-height: 1.5; }
+
+    .card {
+      background: #0b1220;
+      border: 1px solid #1c2a3f;
+      border-radius: 14px;
+      padding: 28px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .card h2 { font-size: 1.05rem; font-weight: 600; margin-bottom: 18px; color: #c8d6e8; }
+
+    form { display: flex; flex-direction: column; gap: 14px; }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 1rem;
+      background: #0a0f1a;
+      border: 1px solid #22304a;
+      border-radius: 10px;
+      color: #e6edf6;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus { border-color: #22c55e; }
+
+    button {
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #22c55e;
+      color: #04120a;
+      transition: background 0.2s, transform 0.05s;
+    }
+    button:hover:not(:disabled) { background: #16a34a; }
+    button:active:not(:disabled) { transform: scale(0.99); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .loading { text-align: center; padding: 12px 0; color: #8fa3bd; display: none; }
+    .loading.active { display: block; }
+    .spinner {
+      display: inline-block;
+      width: 22px; height: 22px;
+      border: 3px solid #22304a;
+      border-top-color: #22c55e;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 10px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #result {
+      margin-top: 20px;
+      display: none;
+      border-radius: 10px;
+      padding: 18px;
+      border: 1px solid;
+      background: #0a0f1a;
+    }
+    #result.visible { display: block; }
+
+    .result-status { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
+    .result-detail { font-size: 0.9rem; color: #b6c4d8; margin-bottom: 10px; word-break: break-all; }
+
+    .badge { display: inline-block; padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; }
+    .badge.phishing { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5); }
+    .badge.legitimate { background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.5); }
+    .badge.unknown { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.5); }
+
+    .message { font-size: 0.85rem; line-height: 1.55; padding: 12px; border-radius: 8px; background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3); color: #9fdcb4; display: none; }
+    .message.show { display: block; }
+    .message.error { background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.3); color: #f0a9a9; }
+
+    footer { margin-top: 22px; text-align: center; font-size: 0.72rem; color: #5d6f8a; line-height: 1.6; }
+
+    @media (max-width: 480px) {
+      .card { padding: 20px; }
+      h1 { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="shield">
+        <svg width="34" height="38" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 1.5 22 5.5v7.2c0 5.2-3.4 9.6-10 11.3C5.4 22.3 2 17.9 2 12.7V5.5L12 1.5z" fill="#22c55e" opacity="0.9"/>
+          <path d="M8.5 13.5l2.5 2.5 4.5-5" stroke="#05080f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </div>
+      <h1>AI Phishing Detection Engine</h1>
+      <p class="subtitle">Multimodal AI Brand Spoofing &amp; Credential Harvesting Phishing Detection</p>
+    </header>
+
+    <div class="card">
+      <h2>Scan a URL</h2>
+      <form id="scan-form">
+        <input type="text" id="url-input" placeholder="Enter URL to scan, e.g. https://example.com/login" autocomplete="off" spellcheck="false">
+        <button type="submit" id="scan-btn">Scan URL</button>
+      </form>
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        Analyzing URL features…
+      </div>
+      <div id="result"></div>
+      <div class="message" id="message"></div>
+    </div>
+
+    <footer>
+      Experimental system — predictions are generated using heuristic URL features<br>
+      and are approximate, not equivalent to the original dataset evaluation.<br>
+      This detector does not visit submitted URLs or collect credentials.
+    </footer>
+  </div>
+
+  <script>
+    const form = document.getElementById('scan-form');
+    const input = document.getElementById('url-input');
+    const btn = document.getElementById('scan-btn');
+    const loading = document.getElementById('loading');
+    const resultEl = document.getElementById('result');
+    const messageEl = document.getElementById('message');
+
+    function showMessage(text, isError) {
+      messageEl.textContent = text;
+      messageEl.className = 'message show' + (isError ? ' error' : '');
+      messageEl.style.display = 'block';
+    }
+
+    function clearMessage() {
+      messageEl.className = 'message';
+      messageEl.style.display = 'none';
+    }
+
+    
+    function showResult(data) {
+      resultEl.className = 'visible';
+      resultEl.innerHTML = '';
+
+      const statusEl = document.createElement('div');
+      const label = data.label || 'Unknown';
+
+      statusEl.className = 'result-status badge ' + label.toLowerCase();
+      statusEl.textContent = label;
+
+      const detailEl = document.createElement('div');
+      detailEl.className = 'result-detail';
+      detailEl.textContent =
+        'URL: ' + (data.url || '') +
+        (data.prediction !== undefined && data.prediction !== null
+          ? ' | Prediction: ' + data.prediction
+          : '');
+
+      resultEl.appendChild(statusEl);
+      resultEl.appendChild(detailEl);
+
+      if (data.error) {
+        const errorEl = document.createElement('div');
+        errorEl.className = 'message error';
+        errorEl.style.display = 'block';
+        errorEl.textContent = data.error;
+        resultEl.appendChild(errorEl);
+      }
+
+      if (data.warning) {
+        const warnEl = document.createElement('div');
+        warnEl.className = 'message';
+        warnEl.style.display = 'block';
+        warnEl.style.background = 'rgba(245, 158, 11, 0.08)';
+        warnEl.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+        warnEl.style.color = '#f0d9a8';
+        warnEl.style.padding = '12px';
+        warnEl.style.borderRadius = '8px';
+        warnEl.textContent = data.warning;
+        resultEl.appendChild(warnEl);
+      }
+    }
+
+
+    function showError(text) {
+      resultEl.className = '';
+      resultEl.innerHTML = '';
+      resultEl.style.display = 'none';
+      showMessage(text, true);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = input.value.trim();
+      if (!url) { showError('Please enter a URL to scan.'); return; }
+      clearMessage();
+      showLoading(true);
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: url })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) { showError(data.error || 'Request failed with status ' + res.status + '.'); return; }
+        showResult(data);
+      } catch (err) {
+        showError('Network error: could not reach the detection service. Please try again.');
+      } finally {
+        showLoading(false);
+      }
+    });
+
+    function showLoading(on) {
+      if (on) { loading.classList.add('active'); btn.disabled = true; }
+      else { loading.classList.remove('active'); btn.disabled = false; }
+    }
+
+    input.addEventListener('input', () => { clearMessage(); });
+  </script>
+</body>
+</html>
