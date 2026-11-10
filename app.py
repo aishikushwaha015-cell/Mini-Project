@@ -6,6 +6,7 @@ from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 
 from phishing.detector import detect
+from phishing.text_detector import analyze_text
 
 app = Flask(__name__)
 CORS(app)
@@ -26,6 +27,19 @@ def predict():
         return jsonify({"error": "A non-empty 'url' string is required."}), 400
 
     result = detect(url)
+    return jsonify(result), 200
+
+
+@app.route("/detect-text", methods=["POST"])
+def detect_text():
+    payload = request.get_json(silent=True)
+    text = payload.get("text") if isinstance(payload, dict) else None
+
+    # Validate: missing / empty / non-string text -> 400
+    if not isinstance(text, str) or not text.strip():
+        return jsonify({"error": "A non-empty 'text' string is required."}), 400
+
+    result = analyze_text(text)
     return jsonify(result), 200
 
 
