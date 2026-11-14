@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon with context %}
+
+{% block page_id %}ocr{% endblock %}
+{% block title %}OCR Analysis · DRISHTI AI{% endblock %}
+{% block kicker %}Analysis Module{% endblock %}
+{% block page_title %}OCR Analysis{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Module 04</p>
+      <h1>OCR Analysis</h1>
+      <p>
+        Extract readable text from a screenshot, then score it with the same rules
+        used by Text Analysis. Images are processed in memory and never saved.
+      </p>
+    </div>
+    <div class="page-head-side">
+      <a class="btn btn-ghost" href="/analysis">All modules</a>
+    </div>
+  </div>
+
+  <div class="analysis-layout">
+    <section class="panel-card" aria-labelledby="ocr-form-heading">
+      <div class="panel-card-head">
+        <div>
+          <h2 id="ocr-form-heading">Upload an image</h2>
+          <p>PNG, JPG or JPEG up to 5 MB.</p>
+        </div>
+      </div>
+
+      <form class="panel-card-body" id="ocr-form" data-api="/analyze-image" novalidate>
+        <div class="field">
+          <label class="field-label" for="ocr-file">Screenshot or image</label>
+          <label class="file-drop" id="ocr-drop">
+            <input
+              id="ocr-file"
+              name="image"
+              type="file"
+              accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+              aria-describedby="ocr-hint">
+            <span class="file-drop-icon">{{ icon('scan-text', 20) }}</span>
+            <span class="file-drop-title">Click to choose an image</span>
+            <span class="file-drop-hint">or drop a PNG / JPG / JPEG file here</span>
+          </label>
+          <div class="file-name" id="ocr-file-name"></div>
+          <p class="field-hint" id="ocr-hint">
+            OCR requires the Tesseract engine to be installed locally. The uploaded
+            image is held in memory only and is discarded after processing.
+          </p>
+        </div>
+
+        <div class="alert alert-error form-alert" id="ocr-error" role="alert" hidden></div>
+
+        <button class="btn btn-primary btn-block" id="ocr-submit" type="submit">
+          {{ icon('scan-line', 18) }}
+          <span class="btn-label">Extract &amp; Analyze</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+    </section>
+
+    <section class="panel-card" id="ocr-result" aria-live="polite" aria-busy="false">
+      <div class="result-empty">
+        <span class="empty-icon">{{ icon('scan-text', 24) }}</span>
+        <p>
+          <strong>No result yet.</strong><br>
+          Upload an image to extract its text and score it for phishing indicators.
+        </p>
+      </div>
+    </section>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+{% endblock %}
