@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon with context %}
+
+{% block page_id %}reports{% endblock %}
+{% block title %}Reports · DRISHTI AI{% endblock %}
+{% block kicker %}Management{% endblock %}
+{% block page_title %}Reports{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Stored metadata</p>
+      <h1>Reports</h1>
+      <p>
+        Printable summaries built only from sanitized history metadata. Each report
+        shows the score, verdict and sanitized module breakdown — never the original
+        input or detector reasons.
+      </p>
+    </div>
+    <div class="page-head-side">
+      <a class="btn btn-ghost" href="/history">
+        {{ icon('history', 16) }}
+        <span>Scan history</span>
+      </a>
+    </div>
+  </div>
+
+  {% if history_error %}
+    <div class="notice notice-warning" role="alert">{{ history_error }}</div>
+  {% endif %}
+
+  <section class="panel" aria-labelledby="reports-heading">
+    <div class="panel-head">
+      <div>
+        <h3 id="reports-heading">Available reports</h3>
+        <p>
+          {% if result.total %}
+            <span class="toolbar-note"><strong>{{ result.total }}</strong> report{% if result.total != 1 %}s{% endif %} available.</span>
+          {% else %}
+            Reports appear after an analysis is recorded.
+          {% endif %}
+        </p>
+      </div>
+      <div class="toolbar">
+        <span class="toolbar-note">Use Print → Save as PDF in your browser.</span>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table stack-mobile">
+        <thead>
+          <tr>
+            <th scope="col">Date (UTC)</th>
+            <th scope="col">Report</th>
+            <th scope="col">Module</th>
+            <th scope="col">Risk</th>
+            <th scope="col">Score</th>
+            <th scope="col">Status</th>
+            <th scope="col"><span class="sr-only">Open</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for scan in result['items'] %}
+            <tr>
+              <td class="time-cell" data-label="Date (UTC)">{{ scan.created_at }}</td>
+              <td class="record-id" data-label="Report">#{{ scan.scan_id }}</td>
+              <td data-label="Module"><span class="type-pill">{{ scan.analysis_type_label }}</span></td>
+              <td class="badge-cell" data-label="Risk">
+                <span class="badge {{ scan.badge_class }}">{{ scan.risk_level }}</span>
+              </td>
+              <td class="score-cell" data-label="Score">
+                {% if scan.risk_score is not none %}{{ scan.risk_score }}/100{% else %}—{% endif %}
+              </td>
+              <td data-label="Status">{{ scan.completion_status }}</td>
+              <td class="actions-cell" data-label="Actions">
+                <a class="table-link" href="{{ scan.report_url }}">View report</a>
+              </td>
+            </tr>
+          {% else %}
+            <tr class="empty-row">
+              <td colspan="7">
+                {% if history_error %}
+                  Reports are currently unavailable. Detection modules still work normally.
+                {% else %}
+                  No reports yet. Run an analysis from
+                  <a class="table-link" href="/analysis">New Analysis</a>.
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if result.pages > 1 %}
+      <nav class="pagination" aria-label="Report pages">
+        <p class="pagination-info">
+          Page {{ result.page }} of {{ result.pages }} · {{ result.total }} report{% if result.total != 1 %}s{% endif %}
+        </p>
+        <div class="pagination-links">
+          {% if pager.prev_url %}
+            <a class="page-link" href="{{ pager.prev_url }}" rel="prev">Previous</a>
+          {% else %}
+            <span class="page-link is-disabled" aria-hidden="true">Previous</span>
+          {% endif %}
+
+          {% for link in pager.links %}
+            {% if link.ellipsis %}
+              <span class="page-gap" aria-hidden="true">…</span>
+            {% elif link.current %}
+              <span class="page-link is-current" aria-current="page">{{ link.number }}</span>
+            {% else %}
+              <a class="page-link" href="{{ link.url }}">{{ link.number }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {% if pager.next_url %}
+            <a class="page-link" href="{{ pager.next_url }}" rel="next">Next</a>
+          {% else %}
+            <span class="page-link is-disabled" aria-hidden="true">Next</span>
+          {% endif %}
+        </div>
+      </nav>
+    {% endif %}
+  </section>
+
+  <div class="notice notice-warning" role="note">
+    Reports contain metadata only. They cannot reproduce the original URL, message,
+    image or HTML. Keep that in mind when sharing a report.
+  </div>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon with context %}
+
+{% block page_id %}report_detail{% endblock %}
+{% block title %}Report #{{ record.scan_id }} · DRISHTI AI{% endblock %}
+{% block kicker %}Report{% endblock %}
+{% block page_title %}Report #{{ record.scan_id }}{% endblock %}
+
+{% block content %}
+  <div class="report-actions no-print">
+    <a class="btn btn-ghost btn-sm" href="/reports">
+      {{ icon('arrow-left', 15) }}
+      <span>All reports</span>
+    </a>
+    <div class="toolbar">
+      <a class="btn btn-ghost btn-sm" href="/history">Scan history</a>
+      <button class="btn btn-secondary btn-sm" type="button" data-print>
+        {{ icon('printer', 15) }}
+        <span>Print / Save as PDF</span>
+      </button>
+    </div>
+  </div>
+
+  <article class="report-sheet" aria-labelledby="report-title">
+    <header class="report-head">
+      <div class="report-brand">
+        <span class="brand-mark">{{ icon('shield', 22) }}</span>
+        <div>
+          <p class="report-brand-name">DRISHTI AI</p>
+          <p class="report-brand-sub">AI-Powered Multimodal Phishing &amp; Brand Spoofing Detection System</p>
+        </div>
+      </div>
+      <div class="report-id">
+        <span>Report</span>
+        <strong>#{{ record.scan_id }}</strong>
+      </div>
+    </header>
+
+    <div class="report-body">
+      <section class="report-section" aria-labelledby="report-title">
+        <h3 id="report-title">Verdict</h3>
+        <div class="report-verdict tone-{{ record.risk_level_key|replace('_', '-') }}">
+          <div class="report-verdict-main">
+            <p class="report-verdict-label">Module result</p>
+            <p class="report-verdict-level">{{ record.label }}</p>
+          </div>
+          <div>
+            <p class="report-verdict-label">Risk level</p>
+            <p class="report-verdict-level">
+              <span class="badge {{ record.badge_class }}">{{ record.risk_level }}</span>
+            </p>
+          </div>
+          <div>
+            <p class="report-verdict-label">Risk score</p>
+            <p class="report-verdict-level">
+              <span class="report-verdict-score tone-{{ record.risk_level_key|replace('_', '-') }}">
+                {% if record.risk_score is not none %}{{ record.risk_score }}{% else %}—{% endif %}
+              </span>
+              <span class="report-verdict-denom">/ 100</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="report-section" aria-labelledby="report-meta-heading">
+        <h3 id="report-meta-heading">Record details</h3>
+        <dl class="report-meta">
+          <div class="kv">
+            <dt>Timestamp (UTC)</dt>
+            <dd>{{ record.created_at }}</dd>
+          </div>
+          <div class="kv">
+            <dt>Analysis module</dt>
+            <dd>{{ record.analysis_type_label }}</dd>
+          </div>
+          <div class="kv">
+            <dt>Completion status</dt>
+            <dd>{{ record.completion_status }}</dd>
+          </div>
+          <div class="kv">
+            <dt>Risk level</dt>
+            <dd>{{ record.risk_level }}</dd>
+          </div>
+          <div class="kv">
+            <dt>Risk score</dt>
+            <dd>{% if record.risk_score is not none %}{{ record.risk_score }} / 100{% else %}Not scored by this module{% endif %}</dd>
+          </div>
+          <div class="kv">
+            <dt>Engine / schema</dt>
+            <dd>{{ record.version|replace('phishguard-', 'drishti-ai-') }} · v{{ record.schema_version }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      {% if breakdown %}
+        <section class="report-section" aria-labelledby="report-breakdown-heading">
+          <h3 id="report-breakdown-heading">Sanitized module breakdown</h3>
+          <div class="table-wrap">
+            <table class="data-table compact-table">
+              <thead>
+                <tr>
+                  <th scope="col">Module</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Risk score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in breakdown %}
+                  <tr>
+                    <td>{{ row.label }}</td>
+                    <td>{{ row.status }}</td>
+                    <td class="score-cell">{% if row.score is not none %}{{ row.score }}/100{% else %}—{% endif %}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      {% endif %}
+
+      {% if count_rows %}
+        <section class="report-section" aria-labelledby="report-counts-heading">
+          <h3 id="report-counts-heading">Sanitized counts</h3>
+          <div class="table-wrap">
+            <table class="data-table compact-table">
+              <thead>
+                <tr>
+                  <th scope="col">Metric</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in count_rows %}
+                  <tr>
+                    <td>{{ row.label }}</td>
+                    <td class="score-cell">{{ row.value }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      {% endif %}
+
+      <section class="report-section" aria-labelledby="report-actions-heading">
+        <h3 id="report-actions-heading">General safety recommendations</h3>
+        <ul class="report-list">
+          {% for item in recommendations %}
+            <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </section>
+
+      <p class="result-note">
+        This report contains sanitized metadata only. The original URL, hostname,
+        message, image, OCR text, HTML, field values and detector reasons are not
+        stored and cannot be reproduced from this record.
+      </p>
+    </div>
+
+    <footer class="report-foot">
+      <span>DRISHTI AI — Digital Risk Identification &amp; Security Through Intelligent AI</span>
+      <span>Sanitized record · {{ record.version|replace('phishguard-', 'drishti-ai-') }} · schema v{{ record.schema_version }}</span>
+    </footer>
+  </article>
+{% endblock %}
