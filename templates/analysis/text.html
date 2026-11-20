@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon with context %}
+
+{% block page_id %}text{% endblock %}
+{% block title %}Text Analysis · DRISHTI AI{% endblock %}
+{% block kicker %}Analysis Module{% endblock %}
+{% block page_title %}Text Analysis{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Module 02</p>
+      <h1>Text Analysis</h1>
+      <p>
+        Score a suspicious message for urgency language, credential requests,
+        prize wording and risky links. Processing stays on this machine.
+      </p>
+    </div>
+    <div class="page-head-side">
+      <a class="btn btn-ghost" href="/analysis">All modules</a>
+    </div>
+  </div>
+
+  <div class="analysis-layout">
+    <section class="panel-card" aria-labelledby="text-form-heading">
+      <div class="panel-card-head">
+        <div>
+          <h2 id="text-form-heading">Paste a message</h2>
+          <p>Email body, SMS, chat message or notification text.</p>
+        </div>
+      </div>
+
+      <form class="panel-card-body" id="text-form" data-api="/detect-text" novalidate>
+        <div class="field">
+          <label class="field-label" for="text-input">
+            Message text
+            <span id="text-count">0 characters</span>
+          </label>
+          <textarea
+            class="textarea"
+            id="text-input"
+            name="text"
+            rows="8"
+            placeholder="Paste the message exactly as you received it…"
+            aria-describedby="text-hint"></textarea>
+          <p class="field-hint" id="text-hint">
+            Links are inspected as text and are never visited. The message is not
+            stored or sent to any third party.
+          </p>
+        </div>
+
+        <div class="alert alert-error form-alert" id="text-error" role="alert" hidden></div>
+
+        <button class="btn btn-primary btn-block" id="text-submit" type="submit">
+          {{ icon('message-square', 18) }}
+          <span class="btn-label">Analyze Message</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+    </section>
+
+    <section class="panel-card" id="text-result" aria-live="polite" aria-busy="false">
+      <div class="result-empty">
+        <span class="empty-icon">{{ icon('message-square', 24) }}</span>
+        <p>
+          <strong>No result yet.</strong><br>
+          Submit a message to see its risk score and the indicators that matched.
+        </p>
+      </div>
+    </section>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+{% endblock %}

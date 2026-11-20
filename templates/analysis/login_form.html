@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon with context %}
+
+{% block page_id %}login_form{% endblock %}
+{% block title %}Login Form Analysis · DRISHTI AI{% endblock %}
+{% block kicker %}Analysis Module{% endblock %}
+{% block page_title %}Login Form Analysis{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Module 05</p>
+      <h1>Login Form Analysis</h1>
+      <p>
+        Inspect HTML for credential fields, insecure or external form actions,
+        GET submissions and hidden fields. Forms are never submitted.
+      </p>
+    </div>
+    <div class="page-head-side">
+      <a class="btn btn-ghost" href="/analysis">All modules</a>
+    </div>
+  </div>
+
+  <div class="analysis-layout">
+    <section class="panel-card" aria-labelledby="login-form-heading">
+      <div class="panel-card-head">
+        <div>
+          <h2 id="login-form-heading">Provide the HTML</h2>
+          <p>Paste the page source or upload an .html file up to 2 MB.</p>
+        </div>
+      </div>
+
+      <div class="panel-card-body">
+        <div class="tabs" role="tablist" aria-label="HTML input method">
+          <button class="tab" id="tab-paste" type="button" role="tab"
+                  aria-selected="true" aria-controls="panel-paste" tabindex="0">
+            Paste HTML
+          </button>
+          <button class="tab" id="tab-upload" type="button" role="tab"
+                  aria-selected="false" aria-controls="panel-upload" tabindex="-1">
+            Upload file
+          </button>
+        </div>
+
+        <div id="panel-paste" role="tabpanel" aria-labelledby="tab-paste">
+          <form id="login-paste-form" data-api="/analyze-login-form" novalidate>
+            <div class="field">
+              <label class="field-label" for="login-html">
+                HTML source
+                <span id="login-count">0 characters</span>
+              </label>
+              <textarea
+                class="textarea is-code"
+                id="login-html"
+                name="html"
+                rows="10"
+                spellcheck="false"
+                placeholder="&lt;form action=&quot;http://example.com/login&quot; method=&quot;post&quot;&gt;…"
+                aria-describedby="login-hint"></textarea>
+              <p class="field-hint" id="login-hint">
+                Include markup only. Field values are not read; do not paste real
+                passwords, PINs or OTPs. Forms are never submitted.
+              </p>
+            </div>
+
+            <div class="alert alert-error form-alert" id="login-paste-error" role="alert" hidden></div>
+
+            <button class="btn btn-primary btn-block" id="login-paste-submit" type="submit">
+              {{ icon('log-in', 18) }}
+              <span class="btn-label">Analyze HTML</span>
+              <span class="btn-spinner" aria-hidden="true"></span>
+            </button>
+          </form>
+        </div>
+
+        <div id="panel-upload" role="tabpanel" aria-labelledby="tab-upload" hidden>
+          <form id="login-upload-form" data-api="/analyze-login-form" novalidate>
+            <div class="field">
+              <label class="field-label" for="login-file">HTML file</label>
+              <label class="file-drop" id="login-drop">
+                <input
+                  id="login-file"
+                  name="file"
+                  type="file"
+                  accept=".html,.htm,text/html"
+                  aria-describedby="login-file-hint">
+                <span class="file-drop-icon">{{ icon('file-text', 20) }}</span>
+                <span class="file-drop-title">Click to choose an HTML file</span>
+                <span class="file-drop-hint">or drop a .html / .htm file here</span>
+              </label>
+              <div class="file-name" id="login-file-name"></div>
+              <p class="field-hint" id="login-file-hint">
+                The file is decoded in memory only and is never written to disk.
+              </p>
+            </div>
+
+            <div class="alert alert-error form-alert" id="login-upload-error" role="alert" hidden></div>
+
+            <button class="btn btn-primary btn-block" id="login-upload-submit" type="submit">
+              {{ icon('log-in', 18) }}
+              <span class="btn-label">Analyze File</span>
+              <span class="btn-spinner" aria-hidden="true"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel-card" id="login-result" aria-live="polite" aria-busy="false">
+      <div class="result-empty">
+        <span class="empty-icon">{{ icon('log-in', 24) }}</span>
+        <p>
+          <strong>No result yet.</strong><br>
+          Provide HTML to see the risk score, detected credential fields and the
+          reasons behind the result.
+        </p>
+      </div>
+    </section>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon with context %}
+
+{% block page_id %}combined{% endblock %}
+{% block title %}Combined Risk Assessment · DRISHTI AI{% endblock %}
+{% block kicker %}Analysis Module{% endblock %}
+{% block page_title %}Combined Risk Assessment{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Module 06</p>
+      <h1>Combined Risk Assessment</h1>
+      <p>
+        Merge every available module result into one weighted phishing risk score.
+        Missing modules are reported as not analyzed and never treated as safe.
+      </p>
+    </div>
+    <div class="page-head-side">
+      <a class="btn btn-ghost" href="/analysis">All modules</a>
+    </div>
+  </div>
+
+  <div class="alert alert-info" role="note">
+    Run any analysis module and its sanitized result appears here automatically.
+    Only scores, labels and reasons are kept in this browser session — never the
+    raw URL, message, image, OCR text or HTML.
+  </div>
+
+  <div class="analysis-layout" style="margin-top: 20px;">
+    <section class="panel-card" aria-labelledby="combined-modules-heading">
+      <div class="panel-card-head">
+        <div>
+          <h2 id="combined-modules-heading">Session modules</h2>
+          <p>Results collected during this browser session.</p>
+        </div>
+      </div>
+
+      <div class="module-list" id="combined-modules">
+        <div class="module-row">
+          <span class="status-dot"></span>
+          <div class="module-row-main">
+            <p class="module-row-title">Loading session results…</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="combined-actions">
+        <div class="alert alert-error form-alert" id="combined-error" role="alert" hidden></div>
+        <button class="btn btn-primary btn-block" id="combined-run" type="button"
+                data-busy-label="Assessing…" disabled>
+          {{ icon('shield-check', 18) }}
+          <span class="btn-label">Run Combined Assessment</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+        <p class="combined-footnote">
+          Weighted locally by the existing engine: URL 40%, Text or OCR 30%,
+          Login Form 20%, with brand similarity as supporting evidence capped at
+          10 points. Weights renormalize over the modules you provide.
+        </p>
+      </div>
+    </section>
+
+    <section class="panel-card" id="combined-result" aria-live="polite" aria-busy="false">
+      <div class="result-empty">
+        <span class="empty-icon">{{ icon('shield-check', 24) }}</span>
+        <p>
+          <strong>No combined score yet.</strong><br>
+          Add at least one module result, then run the assessment to see the overall
+          score, module breakdown and recommended actions.
+        </p>
+      </div>
+    </section>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon with context %}
+
+{% block page_id %}url{% endblock %}
+{% block title %}URL Analysis · DRISHTI AI{% endblock %}
+{% block kicker %}Analysis Module{% endblock %}
+{% block page_title %}URL Analysis{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Module 01</p>
+      <h1>URL Analysis</h1>
+      <p>
+        Classify a web address with the trained Random Forest model. The URL is
+        evaluated locally and is never opened, fetched or resolved.
+      </p>
+    </div>
+    <div class="page-head-side">
+      <a class="btn btn-ghost" href="/analysis">All modules</a>
+    </div>
+  </div>
+
+  <div class="analysis-layout">
+    <section class="panel-card" aria-labelledby="url-form-heading">
+      <div class="panel-card-head">
+        <div>
+          <h2 id="url-form-heading">Submit a URL</h2>
+          <p>Paste the full address, including the scheme when you have it.</p>
+        </div>
+      </div>
+
+      <form class="panel-card-body" id="url-form" data-api="/predict" novalidate>
+        <div class="field">
+          <label class="field-label" for="url-input">Web address</label>
+          <input
+            class="input"
+            id="url-input"
+            name="url"
+            type="text"
+            inputmode="url"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="https://example.com/account/login"
+            aria-describedby="url-hint">
+          <p class="field-hint" id="url-hint">
+            Features are computed from the string itself. The address is not visited
+            and is not saved.
+          </p>
+        </div>
+
+        <div class="alert alert-error form-alert" id="url-error" role="alert" hidden></div>
+
+        <button class="btn btn-primary btn-block" id="url-submit" type="submit">
+          {{ icon('scan-line', 18) }}
+          <span class="btn-label">Analyze URL</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+    </section>
+
+    <section class="panel-card" id="url-result" aria-live="polite" aria-busy="false">
+      <div class="result-empty">
+        <span class="empty-icon">{{ icon('link', 24) }}</span>
+        <p>
+          <strong>No result yet.</strong><br>
+          Submit a URL to see the model classification and risk guidance.
+        </p>
+      </div>
+    </section>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon with context %}
+
+{% block page_id %}hub{% endblock %}
+{% block title %}New Analysis · DRISHTI AI{% endblock %}
+{% block kicker %}Analysis Suite{% endblock %}
+{% block page_title %}New Analysis{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Multimodal detection</p>
+      <h1>Choose a detection module</h1>
+      <p>
+        Six local-first modules cover URLs, messages, images, brand logos, OCR text
+        and login forms. Results feed the Combined Risk Assessment automatically.
+      </p>
+    </div>
+  </div>
+
+  <div class="alert alert-info" role="note">
+    Results are kept only in this browser session and are never written to disk.
+    Raw URLs, messages, uploaded images, OCR text, HTML and credentials are never stored.
+  </div>
+
+  <div class="hub-grid">
+    <a class="module-card" href="/analysis/url">
+      <span class="module-icon">{{ icon('link', 22) }}</span>
+      <h2>URL Analysis</h2>
+      <p>Classify a web address with the trained Random Forest model. The URL is never visited.</p>
+      <span class="module-status" data-module-status="url">Not analyzed yet</span>
+      <span class="module-open">Open module {{ icon('arrow-right', 14) }}</span>
+    </a>
+
+    <a class="module-card" href="/analysis/text">
+      <span class="module-icon">{{ icon('message-square', 22) }}</span>
+      <h2>Text Analysis</h2>
+      <p>Score a suspicious message for urgency, credential and reward wording and risky links.</p>
+      <span class="module-status" data-module-status="text">Not analyzed yet</span>
+      <span class="module-open">Open module {{ icon('arrow-right', 14) }}</span>
+    </a>
+
+    <a class="module-card" href="/analysis/image-brand">
+      <span class="module-icon">{{ icon('image', 22) }}</span>
+      <h2>Image &amp; Brand Analysis</h2>
+      <p>Compare an uploaded logo with the local reference logos for visual similarity.</p>
+      <span class="module-status" data-module-status="brand">Not analyzed yet</span>
+      <span class="module-open">Open module {{ icon('arrow-right', 14) }}</span>
+    </a>
+
+    <a class="module-card" href="/analysis/ocr">
+      <span class="module-icon">{{ icon('scan-text', 22) }}</span>
+      <h2>OCR Analysis</h2>
+      <p>Extract text from a screenshot with OCR, then score it with the text rules.</p>
+      <span class="module-status" data-module-status="ocr">Not analyzed yet</span>
+      <span class="module-open">Open module {{ icon('arrow-right', 14) }}</span>
+    </a>
+
+    <a class="module-card" href="/analysis/login-form">
+      <span class="module-icon">{{ icon('log-in', 22) }}</span>
+      <h2>Login Form Analysis</h2>
+      <p>Inspect pasted or uploaded HTML for risky credential, action and submit patterns.</p>
+      <span class="module-status" data-module-status="login_form">Not analyzed yet</span>
+      <span class="module-open">Open module {{ icon('arrow-right', 14) }}</span>
+    </a>
+
+    <a class="module-card" href="/analysis/combined">
+      <span class="module-icon">{{ icon('shield-check', 22) }}</span>
+      <h2>Combined Risk Assessment</h2>
+      <p>Merge every available module result into one weighted phishing risk score.</p>
+      <span class="module-status" data-module-status="combined">Open to run</span>
+      <span class="module-open">Open module {{ icon('arrow-right', 14) }}</span>
+    </a>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon with context %}
+
+{% block page_id %}image_brand{% endblock %}
+{% block title %}Image & Brand Analysis · DRISHTI AI{% endblock %}
+{% block kicker %}Analysis Module{% endblock %}
+{% block page_title %}Image &amp; Brand Analysis{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Module 03</p>
+      <h1>Image &amp; Brand Analysis</h1>
+      <p>
+        Compare an uploaded logo against the local reference collection using a
+        perceptual hash and grayscale histogram. Similarity is a hint, not proof.
+      </p>
+    </div>
+    <div class="page-head-side">
+      <a class="btn btn-ghost" href="/analysis">All modules</a>
+    </div>
+  </div>
+
+  <div class="analysis-layout">
+    <section class="panel-card" aria-labelledby="brand-form-heading">
+      <div class="panel-card-head">
+        <div>
+          <h2 id="brand-form-heading">Upload a logo</h2>
+          <p>PNG, JPG or JPEG up to 5 MB.</p>
+        </div>
+      </div>
+
+      <form class="panel-card-body" id="brand-form" data-api="/analyze-brand" novalidate>
+        <div class="field">
+          <label class="field-label" for="brand-file">Logo image</label>
+          <label class="file-drop" id="brand-drop">
+            <input
+              id="brand-file"
+              name="image"
+              type="file"
+              accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+              aria-describedby="brand-hint">
+            <span class="file-drop-icon">{{ icon('image', 20) }}</span>
+            <span class="file-drop-title">Click to choose a logo image</span>
+            <span class="file-drop-hint">or drop a PNG / JPG / JPEG file here</span>
+          </label>
+          <div class="file-name" id="brand-file-name"></div>
+          <p class="field-hint" id="brand-hint">
+            Reference logos live in <code>phishing/brand_references/</code> on this
+            machine. Uploaded images are never saved.
+          </p>
+        </div>
+
+        <div class="alert alert-error form-alert" id="brand-error" role="alert" hidden></div>
+
+        <button class="btn btn-primary btn-block" id="brand-submit" type="submit">
+          {{ icon('shield-check', 18) }}
+          <span class="btn-label">Compare Logo</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+    </section>
+
+    <section class="panel-card" id="brand-result" aria-live="polite" aria-busy="false">
+      <div class="result-empty">
+        <span class="empty-icon">{{ icon('image', 24) }}</span>
+        <p>
+          <strong>No result yet.</strong><br>
+          Upload a logo to see visual similarity, the closest reference and the
+          ranked matches.
+        </p>
+      </div>
+    </section>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+{% endblock %}
