@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="DRISHTI AI">
+  <rect width="64" height="64" rx="14" fill="#081426"/>
+  <rect x="1" y="1" width="62" height="62" rx="13" fill="none" stroke="#111F33" stroke-width="2"/>
+  <path d="M32 10.5 50 17v13.4c0 11.6-7.4 18.9-18 22.1-10.6-3.2-18-10.5-18-22.1V17z"
+        fill="#00E5FF" fill-opacity="0.10" stroke="#00E5FF" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M22 32c3.8-6.8 16.2-6.8 20 0-3.8 6.8-16.2 6.8-20 0Z"
+        fill="none" stroke="#00E5FF" stroke-width="2.8" stroke-linejoin="round"/>
+  <circle cx="32" cy="32" r="3.2" fill="#00E5FF"/>
+</svg>

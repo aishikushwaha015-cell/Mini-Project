@@ -1,0 +1,9 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+
+# Local-only scan history database (never commit personal scan metadata)
+instance/*.db

@@ -1,2 +1,4 @@
-# Mini-Project
-Multimodal AI Brand Spoofing &amp; Credential Harvesting Phishing Detection Engine
+# DRISHTI AI
+**Digital Risk Identification & Security Through Intelligent AI**
+
+AI-Powered Multimodal Phishing & Brand Spoofing Detection System

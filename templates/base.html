@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" id="theme-color-meta" content="#f3f7fb">
+  <meta name="color-scheme" content="light dark">
+  <script>
+    (function () {
+      var key = 'drishti.theme';
+      var theme = 'light';
+      try {
+        var saved = window.localStorage.getItem(key);
+        if (saved === 'light' || saved === 'dark') {
+          theme = saved;
+        }
+      } catch (error) {
+        /* Storage can be unavailable; light mode remains the default. */
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+      var meta = document.getElementById('theme-color-meta');
+      if (meta) {
+        meta.setAttribute('content', theme === 'light' ? '#f3f7fb' : '#081426');
+      }
+    })();
+  </script>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <link rel="alternate icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/records.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme-light.css') }}">
+  <title>{% block title %}DRISHTI AI{% endblock %}</title>
+</head>
+<body data-page="{% block page_id %}{% endblock %}">
+  {% from "partials/icons.html" import icon with context %}
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+      <div class="sidebar-brand">
+        <a class="brand-link" href="{{ url_for('index') }}" aria-label="DRISHTI AI overview">
+          <span class="brand-mark">{{ icon('shield', 26) }}</span>
+          <span class="brand-text">
+            <span class="brand-name">DRISHTI AI</span>
+            <span class="brand-sub">Digital Risk Intelligence</span>
+          </span>
+        </a>
+        <button class="icon-button sidebar-mobile-close" id="sidebar-close" type="button" aria-label="Close navigation">
+          {{ icon('x', 20) }}
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <p class="nav-label">Main Menu</p>
+
+          <a class="nav-item{% if active_page == 'overview' %} is-active{% endif %}"
+             href="{{ url_for('index') }}"
+             title="Overview"
+             {% if active_page == 'overview' %}aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icon('layout-dashboard', 19) }}</span>
+            <span class="nav-text">Overview</span>
+          </a>
+
+          <a class="nav-item{% if active_page == 'new_analysis' %} is-active{% endif %}"
+             href="/analysis" title="New Analysis"
+             {% if active_page == 'new_analysis' %}aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icon('plus-circle', 19) }}</span>
+            <span class="nav-text">New Analysis</span>
+          </a>
+
+          <a class="nav-item{% if active_page == 'url' %} is-active{% endif %}"
+             href="/analysis/url" title="URL Analysis"
+             {% if active_page == 'url' %}aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icon('link', 19) }}</span>
+            <span class="nav-text">URL Analysis</span>
+          </a>
+
+          <a class="nav-item{% if active_page == 'text' %} is-active{% endif %}"
+             href="/analysis/text" title="Text Analysis"
+             {% if active_page == 'text' %}aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icon('message-square', 19) }}</span>
+            <span class="nav-text">Text Analysis</span>
+          </a>
+
+          <a class="nav-item{% if active_page == 'image_brand' %} is-active{% endif %}"
+             href="/analysis/image-brand" title="Image &amp; Brand Analysis"
+             {% if active_page == 'image_brand' %}aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icon('image', 19) }}</span>
+            <span class="nav-text">Image &amp; Brand Analysis</span>
+          </a>
+
+          <a class="nav-item{% if active_page == 'ocr' %} is-active{% endif %}"
+             href="/analysis/ocr" title="OCR Analysis"
+             {% if active_page == 'ocr' %}aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icon('scan-text', 19) }}</span>
+            <span class="nav-text">OCR Analysis</span>
+          </a>
+
+          <a class="nav-item{% if active_page == 'login_form' %} is-active{% endif %}"
+             href="/analysis/login-form" title="Login Form Analysis"
+             {% if active_page == 'login_form' %}aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icon('log-in', 19) }}</span>
+            <span class="nav-text">Login Form Analysis</span>
+          </a>
+
+          <a class="nav-item{% if active_page == 'combined' %} is-active{% endif %}"
+             href="/analysis/combined" title="Combined Risk Assessment"
+             {% if active_page == 'combined' %}aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icon('shield-check', 19) }}</span>
+            <span class="nav-text">Combined Risk Assessment</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <p class="nav-label">Management</p>
+
+          <a class="nav-item{% if active_page == 'history' %} is-active{% endif %}"
+             href="/history" title="Scan History"
+             {% if active_page == 'history' %}aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icon('history', 19) }}</span>
+            <span class="nav-text">Scan History</span>
+          </a>
+
+          <a class="nav-item{% if active_page == 'reports' %} is-active{% endif %}"
+             href="/reports" title="Reports"
+             {% if active_page == 'reports' %}aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icon('file-text', 19) }}</span>
+            <span class="nav-text">Reports</span>
+          </a>
+
+          <a class="nav-item{% if active_page == 'settings' %} is-active{% endif %}"
+             href="/settings" title="Settings"
+             {% if active_page == 'settings' %}aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icon('settings', 19) }}</span>
+            <span class="nav-text">Settings</span>
+          </a>
+
+          <a class="nav-item{% if active_page == 'about' %} is-active{% endif %}"
+             href="/about" title="About Project"
+             {% if active_page == 'about' %}aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icon('info', 19) }}</span>
+            <span class="nav-text">About Project</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="theme-control">
+          <span class="theme-control-label">Appearance</span>
+          <button class="theme-toggle" id="theme-toggle" type="button" role="switch"
+                  aria-checked="true" aria-label="Switch to dark mode"
+                  title="Switch to dark mode">
+            <span class="theme-icon theme-icon-sun" aria-hidden="true">{{ icon('sun', 16) }}</span>
+            <span class="theme-track" aria-hidden="true"><span class="theme-thumb"></span></span>
+            <span class="theme-icon theme-icon-moon" aria-hidden="true">{{ icon('moon', 16) }}</span>
+          </button>
+        </div>
+        <button class="collapse-button" id="sidebar-toggle" type="button"
+                aria-label="Collapse sidebar" aria-expanded="true" aria-controls="sidebar">
+          <span class="collapse-icon collapse-open">{{ icon('panel-left-close', 18) }}</span>
+          <span class="collapse-icon collapse-closed">{{ icon('panel-left-open', 18) }}</span>
+          <span class="collapse-text">Collapse sidebar</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+
+    <div class="main-shell">
+      <header class="topbar">
+        <button class="icon-button mobile-menu" id="mobile-menu" type="button"
+                aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+          {{ icon('menu', 22) }}
+        </button>
+
+        <div class="topbar-title">
+          <span class="topbar-kicker">{% block kicker %}Security Console{% endblock %}</span>
+          <span class="topbar-page">{% block page_title %}Overview{% endblock %}</span>
+        </div>
+
+        <div class="topbar-actions">
+          {% block topbar_actions %}{% endblock %}
+        </div>
+      </header>
+
+      <main class="content" id="main-content">
+        {% block content %}{% endblock %}
+      </main>
+
+      <footer class="app-footer">
+        <span>DRISHTI AI — AI-Powered Multimodal Phishing &amp; Brand Spoofing Detection System</span>
+        <span>No URLs visited · No forms submitted · No credentials stored</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/records.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

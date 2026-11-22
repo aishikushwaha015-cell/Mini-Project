@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon with context %}
+
+{% block page_id %}not_found{% endblock %}
+{% block title %}Not found · DRISHTI AI{% endblock %}
+{% block kicker %}Not found{% endblock %}
+{% block page_title %}Not found{% endblock %}
+
+{% block content %}
+  <div class="notfound">
+    <p class="notfound-code">404</p>
+    <h1>That page or record could not be found</h1>
+    <p>
+      The link may be outdated, or the scan record no longer exists. Everything is
+      stored locally, so a cleared history cannot be recovered.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/">
+        {{ icon('layout-dashboard', 16) }}
+        <span>Overview</span>
+      </a>
+      <a class="btn btn-ghost" href="/history">
+        {{ icon('history', 16) }}
+        <span>Scan history</span>
+      </a>
+    </div>
+  </div>
+{% endblock %}

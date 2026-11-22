@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon with context %}
+
+{% block page_id %}about{% endblock %}
+{% block title %}About Project · DRISHTI AI{% endblock %}
+{% block kicker %}Project information{% endblock %}
+{% block page_title %}About Project{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Project information</p>
+      <h1>About DRISHTI AI</h1>
+      <p>
+        Digital Risk Identification &amp; Security Through Intelligent AI. An
+        AI-powered multimodal phishing and brand spoofing detection dashboard that
+        examines six kinds of evidence, presents transparent risk results and keeps
+        only sanitized metadata on this machine.
+      </p>
+    </div>
+    <div class="page-head-side">
+      <a class="btn btn-ghost btn-sm" href="/analysis">
+        {{ icon('scan-line', 15) }}
+        <span>Start an analysis</span>
+      </a>
+    </div>
+  </div>
+
+  <section class="panel" aria-labelledby="intro-heading">
+    <div class="panel-head">
+      <div>
+        <h3 id="intro-heading">Project introduction</h3>
+        <p>What the project is and how it is meant to be used.</p>
+      </div>
+      <span class="badge badge-info">{{ engine_version }}</span>
+    </div>
+    <div class="about-body">
+      <p class="about-lead">
+        DRISHTI AI — Digital Risk Identification &amp; Security Through Intelligent
+        AI — is an AI-powered multimodal phishing and brand spoofing detection
+        system built as a Flask web application for examining suspicious links,
+        messages, screenshots, logos and login pages. Each analysis runs locally
+        and returns a score, a risk level and the indicators that contributed to
+        the result. Results can be combined into a single risk assessment, stored
+        as sanitized history and printed as a report.
+      </p>
+      <p>
+        The dashboard is designed for learning, demonstrations and cautious manual
+        review. It does not visit links, submit forms or upload content to a remote
+        service. A low score is not proof that something is safe, and a high score
+        is not proof of an attack; the output is decision support, not a verdict
+        from an authority.
+      </p>
+      <div class="about-facts">
+        <div class="about-fact">
+          <span class="about-fact-label">Processing</span>
+          <span class="about-fact-value">Local, in memory</span>
+        </div>
+        <div class="about-fact">
+          <span class="about-fact-label">Storage</span>
+          <span class="about-fact-value">Sanitized SQLite metadata</span>
+        </div>
+        <div class="about-fact">
+          <span class="about-fact-label">Modules</span>
+          <span class="about-fact-value">Six analysis paths</span>
+        </div>
+        <div class="about-fact">
+          <span class="about-fact-label">Network calls</span>
+          <span class="about-fact-value">None for detection</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="problem-heading">
+    <div class="panel-head">
+      <div>
+        <h3 id="problem-heading">Problem statement</h3>
+        <p>Why a local, multi-signal analysis tool is useful.</p>
+      </div>
+    </div>
+    <div class="about-body">
+      <p>
+        Phishing arrives through many channels at once: a shortened link in a
+        message, a screenshot of a fake notice, a copied brand logo or a login page
+        that looks almost right. Checking these signals separately is slow, and
+        many online scanners require uploading the original content to a third
+        party.
+      </p>
+      <p>
+        That creates two problems. First, a single signal can be inconclusive on its
+        own, so users need a way to combine URL, text, image, brand, OCR and form
+        evidence. Second, sensitive content should not have to leave the machine or
+        remain in a database after the check. DRISHTI AI addresses both by running
+        local detectors and persisting only non-sensitive summary metadata.
+      </p>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="objectives-heading">
+    <div class="panel-head">
+      <div>
+        <h3 id="objectives-heading">Project objectives</h3>
+        <p>What the implementation is trying to achieve.</p>
+      </div>
+    </div>
+    <div class="about-body">
+      <ol class="objective-list">
+        <li>
+          <span class="objective-number">01</span>
+          <div>
+            <strong>Analyze multiple phishing signals locally.</strong>
+            <p>Support URLs, text messages, images, OCR text, brand logos and login-form HTML in one console.</p>
+          </div>
+        </li>
+        <li>
+          <span class="objective-number">02</span>
+          <div>
+            <strong>Make each result understandable.</strong>
+            <p>Show the score, risk level and the indicators that influenced the analysis instead of a unexplained label.</p>
+          </div>
+        </li>
+        <li>
+          <span class="objective-number">03</span>
+          <div>
+            <strong>Combine evidence without double counting.</strong>
+            <p>Use fixed, documented weights and report missing or inconclusive modules honestly.</p>
+          </div>
+        </li>
+        <li>
+          <span class="objective-number">04</span>
+          <div>
+            <strong>Preserve privacy by design.</strong>
+            <p>Keep raw inputs out of SQLite and store only the metadata needed for history and reports.</p>
+          </div>
+        </li>
+        <li>
+          <span class="objective-number">05</span>
+          <div>
+            <strong>Provide a usable security dashboard.</strong>
+            <p>Offer responsive navigation, searchable history, printable reports and clear error states.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="modules-heading">
+    <div class="panel-head">
+      <div>
+        <h3 id="modules-heading">Detection modules</h3>
+        <p>Six independent analysis paths and what each one contributes.</p>
+      </div>
+    </div>
+    <div class="about-body">
+      <div class="about-grid">
+        <article class="about-card">
+          <span class="about-card-icon">{{ icon('link', 20) }}</span>
+          <h4>URL Analysis</h4>
+          <p>
+            Extracts structural and lexical features from a submitted URL and runs
+            them through a trained Random Forest model. The URL is never visited.
+          </p>
+          <span class="about-tag">Machine learning</span>
+        </article>
+
+        <article class="about-card">
+          <span class="about-card-icon">{{ icon('message-square', 20) }}</span>
+          <h4>Text Analysis</h4>
+          <p>
+            Applies local rules for urgency, credential requests, suspicious links,
+            prize wording and similar phishing patterns in a message.
+          </p>
+          <span class="about-tag">Rule-based</span>
+        </article>
+
+        <article class="about-card">
+          <span class="about-card-icon">{{ icon('scan-text', 20) }}</span>
+          <h4>OCR Analysis</h4>
+          <p>
+            Reads text from a screenshot or image with Tesseract, then reuses the
+            text rules. Images are processed in memory and never saved.
+          </p>
+          <span class="about-tag">OCR + text rules</span>
+        </article>
+
+        <article class="about-card">
+          <span class="about-card-icon">{{ icon('image', 20) }}</span>
+          <h4>Image &amp; Brand Analysis</h4>
+          <p>
+            Compares a logo against local reference images using a difference hash
+            and grayscale histogram. Similarity is supporting evidence only.
+          </p>
+          <span class="about-tag">Visual similarity</span>
+        </article>
+
+        <article class="about-card">
+          <span class="about-card-icon">{{ icon('log-in', 20) }}</span>
+          <h4>Login Form Analysis</h4>
+          <p>
+            Inspects pasted or uploaded HTML for credential fields, insecure
+            submissions, hidden inputs and suspicious form actions. Forms are never
+            submitted.
+          </p>
+          <span class="about-tag">HTML heuristics</span>
+        </article>
+
+        <article class="about-card">
+          <span class="about-card-icon">{{ icon('shield-check', 20) }}</span>
+          <h4>Combined Risk Assessment</h4>
+          <p>
+            Normalizes available module results, applies fixed weights and produces
+            one overall score with a module-by-module breakdown.
+          </p>
+          <span class="about-tag">Weighted assessment</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="stack-heading">
+    <div class="panel-head">
+      <div>
+        <h3 id="stack-heading">Technology stack</h3>
+        <p>Simple descriptions of the libraries and standards in use.</p>
+      </div>
+    </div>
+    <div class="about-body">
+      <div class="stack-grid">
+        <div class="stack-item">
+          <strong>Python</strong>
+          <p>Application language for all detectors, storage and server logic.</p>
+        </div>
+        <div class="stack-item">
+          <strong>Flask</strong>
+          <p>Web framework serving pages, form routes and JSON analysis endpoints.</p>
+        </div>
+        <div class="stack-item">
+          <strong>Jinja templates</strong>
+          <p>Server-rendered HTML shared across the dashboard, history and reports.</p>
+        </div>
+        <div class="stack-item">
+          <strong>HTML, CSS &amp; vanilla JavaScript</strong>
+          <p>Responsive interface, sidebar behaviour and confirmation dialogs with no frontend framework.</p>
+        </div>
+        <div class="stack-item">
+          <strong>scikit-learn &amp; joblib</strong>
+          <p>Load and run the trained Random Forest model used for URL analysis.</p>
+        </div>
+        <div class="stack-item">
+          <strong>pandas &amp; NumPy</strong>
+          <p>Feature tables for the model and numeric operations for image comparison.</p>
+        </div>
+        <div class="stack-item">
+          <strong>Pillow &amp; pytesseract</strong>
+          <p>Image validation, logo hashing and OCR through a locally installed Tesseract engine.</p>
+        </div>
+        <div class="stack-item">
+          <strong>SQLite</strong>
+          <p>Single-file local database for sanitized scan metadata and reports.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="workflow-heading">
+    <div class="panel-head">
+      <div>
+        <h3 id="workflow-heading">Architecture &amp; detection workflow</h3>
+        <p>How a submitted input becomes a result, a record and a report.</p>
+      </div>
+    </div>
+    <div class="about-body">
+      <ol class="workflow">
+        <li class="workflow-step">
+          <span class="workflow-number">1</span>
+          <div>
+            <strong>Input in the browser</strong>
+            <p>A URL, message, image, logo or HTML snippet is entered or selected in one of the analysis pages.</p>
+          </div>
+        </li>
+        <li class="workflow-step">
+          <span class="workflow-number">2</span>
+          <div>
+            <strong>Flask route validation</strong>
+            <p>The route checks type, size and presence, then passes the content to the matching local module.</p>
+          </div>
+        </li>
+        <li class="workflow-step">
+          <span class="workflow-number">3</span>
+          <div>
+            <strong>Local module analysis</strong>
+            <p>The module computes a score and indicators. Raw content stays in memory and is never written to disk.</p>
+          </div>
+        </li>
+        <li class="workflow-step">
+          <span class="workflow-number">4</span>
+          <div>
+            <strong>Result presentation</strong>
+            <p>The browser displays the verdict, score and reasons. Combined assessment can merge the available module results.</p>
+          </div>
+        </li>
+        <li class="workflow-step">
+          <span class="workflow-number">5</span>
+          <div>
+            <strong>Sanitized persistence</strong>
+            <p>A whitelist builds a metadata-only record and writes it to SQLite. Database failures never break detection.</p>
+          </div>
+        </li>
+        <li class="workflow-step">
+          <span class="workflow-number">6</span>
+          <div>
+            <strong>History and reports</strong>
+            <p>The overview, history page and printable reports read the sanitized records back from the local database.</p>
+          </div>
+        </li>
+      </ol>
+      <p class="result-note">
+        No external APIs, cloud inference or remote analytics are part of this
+        workflow. The only optional external dependency is the local Tesseract OCR
+        engine used by the OCR module.
+      </p>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="limits-heading">
+    <div class="panel-head">
+      <div>
+        <h3 id="limits-heading">Limitations &amp; future scope</h3>
+        <p>Known boundaries of the current build and possible directions.</p>
+      </div>
+    </div>
+    <div class="about-body">
+      <div class="about-columns">
+        <div class="about-column">
+          <h4>{{ icon('alert-circle', 17) }} Current limitations</h4>
+          <ul class="plain-list">
+            <li>Results are heuristic decision support, not a guarantee that content is safe or malicious.</li>
+            <li>The URL model uses approximate features and its predictions can differ from its original dataset evaluation.</li>
+            <li>Brand analysis depends on reference logos placed locally; with no references it returns an inconclusive result.</li>
+            <li>OCR requires Tesseract to be installed and can struggle with low-quality or stylized images.</li>
+            <li>The text and login-form detectors use fixed rules and may miss novel wording or unusual markup.</li>
+            <li>No accuracy, precision or recall figures are claimed in this interface.</li>
+            <li>The app is a local single-user dashboard without authentication or production hardening.</li>
+          </ul>
+        </div>
+        <div class="about-column">
+          <h4>{{ icon('sparkles', 17) }} Possible future scope</h4>
+          <ul class="plain-list">
+            <li>Add a curated set of local reference logos for brand comparison.</li>
+            <li>Introduce batch analysis and comparison of several inputs.</li>
+            <li>Offer optional export and import of sanitized history.</li>
+            <li>Expand OCR language support and image pre-processing.</li>
+            <li>Add optional access control for shared machines.</li>
+            <li>Document model evaluation separately from the dashboard.</li>
+            <li>Provide browser-extension or email-client integrations without changing the privacy model.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="project-info-heading">
+    <div class="panel-head">
+      <div>
+        <h3 id="project-info-heading">Project information</h3>
+        <p>Only confirmed values are shown; missing details are marked as placeholders.</p>
+      </div>
+    </div>
+    <div class="about-body">
+      <dl class="report-meta about-meta">
+        <div class="kv">
+          <dt>Project name</dt>
+          <dd>DRISHTI AI</dd>
+        </div>
+        <div class="kv">
+          <dt>Full form</dt>
+          <dd>Digital Risk Identification &amp; Security Through Intelligent AI</dd>
+        </div>
+        <div class="kv">
+          <dt>Tagline</dt>
+          <dd>AI-Powered Multimodal Phishing &amp; Brand Spoofing Detection System</dd>
+        </div>
+        <div class="kv">
+          <dt>Build / engine</dt>
+          <dd>{{ engine_version }} · schema v{{ schema_version }}</dd>
+        </div>
+        <div class="kv">
+          <dt>Development stage</dt>
+          <dd>Final development stage</dd>
+        </div>
+        <div class="kv">
+          <dt>Developer / team</dt>
+          <dd>Not specified in the project files</dd>
+        </div>
+        <div class="kv">
+          <dt>Institution / course</dt>
+          <dd>Not specified in the project files</dd>
+        </div>
+        <div class="kv">
+          <dt>License</dt>
+          <dd>Not specified in the project files</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+{% endblock %}

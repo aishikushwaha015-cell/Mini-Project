@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon with context %}
+
+{% block page_id %}settings{% endblock %}
+{% block title %}Settings · DRISHTI AI{% endblock %}
+{% block kicker %}Management{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">DRISHTI AI · Local configuration</p>
+      <h1>Settings</h1>
+      <p>
+        Digital Risk Identification &amp; Security Through Intelligent AI. Review
+        where scan metadata is stored, how the dashboard is configured and what the
+        detector deliberately does not keep. Settings are read-only except for
+        clearing local history.
+      </p>
+    </div>
+    <div class="page-head-side">
+      <a class="btn btn-ghost btn-sm" href="/history">
+        {{ icon('history', 15) }}
+        <span>Open scan history</span>
+      </a>
+    </div>
+  </div>
+
+  {% if notice %}
+    <div class="notice notice-success" role="status">{{ notice }}</div>
+  {% endif %}
+  {% if history_error %}
+    <div class="notice notice-warning" role="alert">{{ history_error }}</div>
+  {% endif %}
+
+  <section class="panel" aria-labelledby="storage-heading">
+    <div class="panel-head">
+      <div>
+        <h3 id="storage-heading">Database &amp; privacy</h3>
+        <p>All scan metadata stays on this machine in a single local SQLite file.</p>
+      </div>
+      <span class="badge badge-info">Local only</span>
+    </div>
+
+    <div class="settings-body">
+      <div class="settings-grid">
+        <article class="settings-card" aria-labelledby="db-location-heading">
+          <span class="settings-icon">{{ icon('hard-drive', 20) }}</span>
+          <div>
+            <h4 id="db-location-heading">Project database location</h4>
+            <p class="path-value">{{ database_path }}</p>
+            <dl class="mini-meta">
+              <div>
+                <dt>Status</dt>
+                <dd>
+                  {% if database_exists %}
+                    Present · {{ '%.1f'|format(database_size / 1024) }} KB
+                  {% else %}
+                    Created on first scan
+                  {% endif %}
+                </dd>
+              </div>
+              <div>
+                <dt>Stored records</dt>
+                <dd>{{ stats.total }}</dd>
+              </div>
+              <div>
+                <dt>Engine / schema</dt>
+                <dd>{{ engine_version }} · v{{ schema_version }}</dd>
+              </div>
+            </dl>
+          </div>
+        </article>
+
+        <article class="settings-card" aria-labelledby="retention-heading">
+          <span class="settings-icon">{{ icon('clock', 20) }}</span>
+          <div>
+            <h4 id="retention-heading">Retention</h4>
+            <p class="settings-note">
+              Records remain until you delete them individually or clear the
+              database. Nothing is uploaded, synced or shared.
+            </p>
+            <dl class="mini-meta">
+              <div>
+                <dt>Retention policy</dt>
+                <dd>Manual deletion only</dd>
+              </div>
+              <div>
+                <dt>Network transfer</dt>
+                <dd>None</dd>
+              </div>
+              <div>
+                <dt>Remote analytics</dt>
+                <dd>None</dd>
+              </div>
+            </dl>
+          </div>
+        </article>
+      </div>
+
+      <div class="privacy-columns">
+        <div class="privacy-card privacy-stored">
+          <h4>{{ icon('shield-check', 17) }} Stored metadata</h4>
+          <ul class="privacy-list">
+            <li>Scan ID and UTC timestamp</li>
+            <li>Module name and completion status</li>
+            <li>Verdict label and normalized risk level</li>
+            <li>Risk score from 0 to 100, when available</li>
+            <li>Sanitized numeric counts (for example fields found)</li>
+            <li>Engine and schema version marker</li>
+          </ul>
+        </div>
+
+        <div class="privacy-card privacy-never">
+          <h4>{{ icon('lock', 17) }} Never stored</h4>
+          <ul class="privacy-list">
+            <li>Raw URLs, hostnames or query strings</li>
+            <li>Messages, OCR text or document contents</li>
+            <li>Uploaded images, logos or filenames</li>
+            <li>Login-form HTML or field values</li>
+            <li>Passwords, OTPs, tokens or credentials</li>
+            <li>Detector reasons or recommendations</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="config-heading">
+    <div class="panel-head">
+      <div>
+        <h3 id="config-heading">Dashboard configuration</h3>
+        <p>Fixed values used by the current build. They are shown for transparency.</p>
+      </div>
+      <span class="badge badge-neutral">Read only</span>
+    </div>
+
+    <div class="settings-body">
+      <dl class="config-grid">
+        <div class="config-item is-wide">
+          <dt>Project identity</dt>
+          <dd>DRISHTI AI</dd>
+          <p>
+            Digital Risk Identification &amp; Security Through Intelligent AI.<br>
+            AI-Powered Multimodal Phishing &amp; Brand Spoofing Detection System.
+          </p>
+        </div>
+        <div class="config-item">
+          <dt>Detection modules</dt>
+          <dd>{{ module_count }} local modules</dd>
+          <p>URL, text, OCR, image &amp; brand, login form and combined assessment.</p>
+        </div>
+        <div class="config-item">
+          <dt>History page size</dt>
+          <dd>10 records per page</dd>
+          <p>The overview shows the six most recent scans.</p>
+        </div>
+        <div class="config-item">
+          <dt>Risk thresholds</dt>
+          <dd>
+            Safe &lt; {{ suspicious_threshold }} · Suspicious
+            {{ suspicious_threshold }}–{{ high_risk_threshold - 1 }} · High Risk
+            ≥ {{ high_risk_threshold }}
+          </dd>
+          <p>Brand similarity and missing results are reported as inconclusive.</p>
+        </div>
+        <div class="config-item">
+          <dt>Combined weights</dt>
+          <dd>
+            URL {{ (weights.url * 100)|round|int }}% · Text/OCR
+            {{ (weights.content * 100)|round|int }}% · Login
+            {{ (weights.login_form * 100)|round|int }}%
+          </dd>
+          <p>
+            Weights are renormalized over available modules. Brand similarity adds
+            at most {{ brand_cap }} points as supporting evidence.
+          </p>
+        </div>
+        <div class="config-item">
+          <dt>Appearance</dt>
+          <dd>Midnight Navy dark and light themes</dd>
+          <div class="swatches" aria-label="Approved palette">
+            <span class="swatch" style="--swatch: #081426" title="Midnight Navy #081426"></span>
+            <span class="swatch" style="--swatch: #00E5FF" title="Electric Cyan #00E5FF"></span>
+            <span class="swatch" style="--swatch: #FF3B4E" title="Cyber Red #FF3B4E"></span>
+            <span class="swatch" style="--swatch: #111F33" title="Slate Navy #111F33"></span>
+            <span class="swatch" style="--swatch: #DCE7F3" title="Cool White #DCE7F3"></span>
+            <span class="swatch" style="--swatch: #91A4BA" title="Muted #91A4BA"></span>
+            <span class="swatch" style="--swatch: #FFB648" title="Amber #FFB648"></span>
+            <span class="swatch" style="--swatch: #35D07F" title="Green #35D07F"></span>
+          </div>
+        </div>
+        <div class="config-item">
+          <dt>Analysis engines</dt>
+          <dd>{{ engine_version }} · schema v{{ schema_version }}</dd>
+          <p>Random Forest URL model, rule-based text scoring, Tesseract OCR and local heuristics.</p>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="manage-history-heading">
+    <div class="panel-head">
+      <div>
+        <h3 id="manage-history-heading">Scan history management</h3>
+        <p>
+          Delete individual records from the history page, or clear the whole local
+          database here. Detection modules are not affected.
+        </p>
+      </div>
+    </div>
+
+    <div class="settings-body">
+      <div class="history-summary">
+        <div class="summary-stat">
+          <span class="summary-label">Total</span>
+          <span class="summary-value">{{ stats.total }}</span>
+        </div>
+        <div class="summary-stat">
+          <span class="summary-label">Safe</span>
+          <span class="summary-value tone-safe">{{ stats.safe }}</span>
+        </div>
+        <div class="summary-stat">
+          <span class="summary-label">Suspicious</span>
+          <span class="summary-value tone-suspicious">{{ stats.suspicious }}</span>
+        </div>
+        <div class="summary-stat">
+          <span class="summary-label">High risk</span>
+          <span class="summary-value tone-high">{{ stats.high_risk }}</span>
+        </div>
+        <div class="summary-stat">
+          <span class="summary-label">Inconclusive</span>
+          <span class="summary-value tone-inconclusive">{{ stats.inconclusive }}</span>
+        </div>
+      </div>
+
+      <div class="settings-actions">
+        <a class="btn btn-ghost" href="/history">
+          {{ icon('history', 16) }}
+          <span>Manage individual records</span>
+        </a>
+
+        {% if stats.total %}
+          <form action="/settings/history/clear" method="post"
+                data-confirm
+                data-confirm-title="Clear all scan history?"
+                data-confirm-message="This permanently deletes all {{ stats.total }} stored scan records. Detection modules and reports will be empty until new scans are run."
+                data-confirm-label="Delete all records">
+            <button class="btn btn-danger" type="submit">
+              {{ icon('trash', 16) }}
+              <span>Clear all scan history</span>
+            </button>
+          </form>
+        {% else %}
+          <button class="btn btn-danger" type="button" disabled>
+            {{ icon('trash', 16) }}
+            <span>History already empty</span>
+          </button>
+        {% endif %}
+      </div>
+
+      <p class="settings-note">
+        Clearing history also removes the associated reports because reports are
+        generated from the same sanitized records.
+      </p>
+    </div>
+  </section>
+
+  {% include "partials/confirm_dialog.html" %}
+{% endblock %}
